@@ -1,0 +1,1 @@
+include ':google-fusedlocation-listener-example', ':google-fusedlocation-pendingintent-example', ':locationmanager-listener-example', ':locationmanager-pendingintent-example', ':pathsensetruepathexample', ':pathsense-android-sdk-bundle'

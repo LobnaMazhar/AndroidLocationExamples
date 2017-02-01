@@ -25,7 +25,6 @@ public class LocationIntentService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("LocationIntentService", "onHandleIntent called!");
         LocationResult locationResult = LocationResult.extractResult(intent);
         //Do what you need here before sending out location results.
         Intent locationResultIntent = new Intent("googleLocation"); //Note the intent filter used

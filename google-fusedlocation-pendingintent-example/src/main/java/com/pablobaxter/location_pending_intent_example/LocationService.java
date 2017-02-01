@@ -49,16 +49,17 @@ public class LocationService extends Service implements
     public int onStartCommand(Intent intent, int flags, int startId){
         super.onStartCommand(intent, flags, startId);
         //Permission check for Android 6.0+
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (intent.getBooleanExtra("request", false)) {
-                if (mGoogleApiClient.isConnected()) {
-                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, getPendingIntent());
-                } else {
-                    mGoogleApiClient.connect();
+        if(intent != null) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (intent.getBooleanExtra("request", false)) {
+                    if (mGoogleApiClient.isConnected()) {
+                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, getPendingIntent());
+                    } else {
+                        mGoogleApiClient.connect();
+                    }
+                } else if (intent.getBooleanExtra("remove", false)) {
+                    stopSelf();
                 }
-            }
-            else if(intent.getBooleanExtra("remove", false)){
-                stopSelf();
             }
         }
 

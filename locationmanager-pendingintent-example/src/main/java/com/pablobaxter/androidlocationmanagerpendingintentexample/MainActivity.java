@@ -43,10 +43,10 @@ public class MainActivity extends AppCompatActivity {
         mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
         //Use this to get updates in the broadcast receiver.
-//        mPendingIntent =  PendingIntent.getBroadcast(this, 0, new Intent(this, LocationBroadcastReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        mPendingIntent =  PendingIntent.getBroadcast(this, 0, new Intent(this, LocationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Use this to get updates in the intent service.
-        mPendingIntent =  PendingIntent.getBroadcast(this, 0, new Intent(this, LocationIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+//        mPendingIntent =  PendingIntent.getService(this, 0, new Intent(this, LocationIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         mLocalReceiver = new InternalLocalReceiver(this);
     }

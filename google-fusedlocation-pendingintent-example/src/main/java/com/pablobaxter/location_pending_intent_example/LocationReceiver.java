@@ -20,7 +20,6 @@ import com.google.android.gms.location.LocationResult;
 public class LocationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("LocationReceiver", "onReceiver called!");
         LocationResult locationResult = LocationResult.extractResult(intent);
         //Do what you need here before sending out location results.
         Intent locationResultIntent = new Intent("googleLocation"); //Note the intent filter used

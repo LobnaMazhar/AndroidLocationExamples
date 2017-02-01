@@ -37,6 +37,7 @@ public class ExampleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         //Create internal receiver object in this method only.
         mInternalLocationReceiver = new InternalLocationReceiver(this);
@@ -114,9 +115,11 @@ public class ExampleActivity extends AppCompatActivity {
             final TextView textView = activity != null ? (TextView)activity.findViewById(R.id.location_text) : null;
             if(activity != null && textView != null) {
                 LocationResult result = intent.getParcelableExtra("result"); //Get the LocationResult from the intent.
-                Location location = result.getLastLocation();
-                //Handle location update here
-                textView.setText(String.format(Locale.US, "Location, %s, %f, %f", location.getProvider(), location.getLatitude(), location.getLongitude()));
+                if(result != null) {
+                    Location location = result.getLastLocation();
+                    //Handle location update here
+                    textView.setText(String.format(Locale.US, "Location, %s, %f, %f", location.getProvider(), location.getLatitude(), location.getLongitude()));
+                }
             }
         }
     }

@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private LocationManager mLocationManager;
     private TextView mTextView;
+    private HandlerThread mHandlerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +56,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onPause(){
         super.onPause();
+
         //Permission check for Android 6.0+
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.removeUpdates(this);
+        }
+
+        //Always stop threads that are no longer needed.
+        if(mHandlerThread != null){
+            mHandlerThread.quit();
+            mHandlerThread = null;
         }
     }
 
@@ -151,18 +159,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @SuppressWarnings("MissingPermission")
     private void requestUsingProvidersBackground(){
-        HandlerThread handlerThread = new HandlerThread("LocationThread"); //Create our new thread
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper(); //Get the looper for the new thread.
+        mHandlerThread = new HandlerThread("LocationThread"); //Create our new thread
+        mHandlerThread.start();
+        Looper looper = mHandlerThread.getLooper(); //Get the looper for the new thread.
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this, looper); //Location updates are done in a background thread.
     }
 
     @SuppressWarnings("MissingPermission")
     private void requestUsingCriteriaBackground(){
-        HandlerThread handlerThread = new HandlerThread("LocationThread"); //Create our new thread.
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper(); //Get the looper for the new thread.
+        mHandlerThread = new HandlerThread("LocationThread"); //Create our new thread.
+        mHandlerThread.start();
+        Looper looper = mHandlerThread.getLooper(); //Get the looper for the new thread.
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE); //We just want the best accuracy

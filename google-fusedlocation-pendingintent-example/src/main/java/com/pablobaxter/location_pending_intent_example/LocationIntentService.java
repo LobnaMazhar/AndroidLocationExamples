@@ -15,9 +15,11 @@ import com.google.android.gms.location.LocationResult;
  * It is important to note that onHandleIntent will be called in a background thread that will live only as long
  * as you are still running within onHandleIntent. This is what you would want to use if you need to handle long
  * running tasks on location, so you don't block the main (UI) thread.
+ *
+ * @deprecated This will no longer work on devices targeting API 26 (Android Oreo).
  */
 
-public class LocationIntentService extends IntentService{
+public class LocationIntentService extends IntentService {
 
     public LocationIntentService() {
         super("LocationIntentService");

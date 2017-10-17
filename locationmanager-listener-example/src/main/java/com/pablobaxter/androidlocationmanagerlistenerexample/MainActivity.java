@@ -36,34 +36,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-        mTextView = (TextView)findViewById(R.id.location_text);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mTextView = (TextView) findViewById(R.id.location_text);
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         //Permission check for Android 6.0+
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             requestUpdates();
-        }
-        else {
+        } else {
             //Request permissions if we need them
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
 
         //Permission check for Android 6.0+
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.removeUpdates(this);
         }
 
         //Always stop threads that are no longer needed.
-        if(mHandlerThread != null){
+        if (mHandlerThread != null) {
             mHandlerThread.quit();
             mHandlerThread = null;
         }
@@ -71,10 +70,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @SuppressWarnings("MissingPermission")
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        if(requestCode == 0){ //Request code passed in by requestPermissions(Activity, String[], int)
-            if(permissions.length > 0 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)){
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) { //Request code passed in by requestPermissions(Activity, String[], int)
+            if (permissions.length > 0 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     requestUpdates();
                 }
             }
@@ -92,10 +91,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
          */
 
         //In the main thread?
-        if(Looper.myLooper() == Looper.getMainLooper()) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
             mTextView.setText(String.format(Locale.US, "%s, %s, %f, %f", "Main Thread", location.getProvider(), location.getLatitude(), location.getLongitude()));
-        }
-        else {
+        } else {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -121,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     //Simple helper method
-    private void requestUpdates(){
+    private void requestUpdates() {
         /* Requesting for locations using Providers */
         requestUsingProviders();
 
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @SuppressWarnings("MissingPermission")
-    private void requestUsingProviders(){
+    private void requestUsingProviders() {
         //GPS Location
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this); //Time is set to fastest, with a minimum distance of 0m.
 
@@ -146,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @SuppressWarnings("MissingPermission")
-    private void requestUsingCriteria(){
+    private void requestUsingCriteria() {
         //Get the new criteria object
         Criteria criteria = new Criteria();
 
@@ -158,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @SuppressWarnings("MissingPermission")
-    private void requestUsingProvidersBackground(){
+    private void requestUsingProvidersBackground() {
         mHandlerThread = new HandlerThread("LocationThread"); //Create our new thread
         mHandlerThread.start();
         Looper looper = mHandlerThread.getLooper(); //Get the looper for the new thread.
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @SuppressWarnings("MissingPermission")
-    private void requestUsingCriteriaBackground(){
+    private void requestUsingCriteriaBackground() {
         mHandlerThread = new HandlerThread("LocationThread"); //Create our new thread.
         mHandlerThread.start();
         Looper looper = mHandlerThread.getLooper(); //Get the looper for the new thread.

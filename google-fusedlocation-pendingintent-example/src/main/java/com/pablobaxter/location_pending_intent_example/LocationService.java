@@ -22,6 +22,8 @@ import com.google.android.gms.location.LocationServices;
  *
  * This service keeps location services running, even when the app has gone into the background.
  *
+ * Note: On Android Oreo+, this service will be killed off unless your app is running in the foreground
+ * as defined in: https://developer.android.com/about/versions/oreo/background.html#services
  */
 
 public class LocationService extends Service implements
@@ -31,7 +33,7 @@ public class LocationService extends Service implements
     private LocationRequest mLocationRequest;
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -46,10 +48,10 @@ public class LocationService extends Service implements
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         //Permission check for Android 6.0+
-        if(intent != null) {
+        if (intent != null) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (intent.getBooleanExtra("request", false)) {
                     if (mGoogleApiClient.isConnected()) {
@@ -67,27 +69,31 @@ public class LocationService extends Service implements
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
-        if(mGoogleApiClient.isConnected()){
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, getPendingIntent());
             mGoogleApiClient.disconnect();
         }
     }
 
-    private PendingIntent getPendingIntent(){
-
-        //Example for IntentService
-//        return PendingIntent.getService(this, 0, new Intent(this, LocationIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+    private PendingIntent getPendingIntent() {
 
         //Example for BroadcastReceiver
         return PendingIntent.getBroadcast(this, 0, new Intent(this, LocationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        /*
+         * Note: This will no longer work with Android Oreo. I highly recommend using the above method (using a BroadcastReceiver).
+         */
+
+        //Example for IntentService
+//        return PendingIntent.getService(this, 0, new Intent(this, LocationIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         //Permission check for Android 6.0+
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, getPendingIntent());
         }
     }

@@ -30,12 +30,13 @@ import java.util.Locale;
  * class with a registered local receiver will continue to receive updates, until "stopUpdates()" is called here.
  *
  */
+
 public class ExampleActivity extends AppCompatActivity {
 
     private InternalLocationReceiver mInternalLocationReceiver;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -44,7 +45,7 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
         //Register to receive updates in activity only when activity is visible
@@ -55,7 +56,7 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
 
         //Unregister to stop receiving updates in activity when it is not visible.
@@ -68,10 +69,10 @@ public class ExampleActivity extends AppCompatActivity {
 
     @SuppressWarnings("MissingPermission")
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        if(requestCode == 0){ //Request code passed in by requestPermissions(Activity, String[], int)
-            if(permissions.length > 0 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)){
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) { //Request code passed in by requestPermissions(Activity, String[], int)
+            if (permissions.length > 0 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startService(new Intent(this, LocationService.class).putExtra("request", true));
                 }
             }
@@ -79,18 +80,17 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     //Helper method to get updates
-    private void requestUpdates(){
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+    private void requestUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             startService(new Intent(this, LocationService.class).putExtra("request", true));
-        }
-        else {
+        } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
 
     }
 
     //Helper method to stop updates
-    private void stopUpdates(){
+    private void stopUpdates() {
         startService(new Intent(this, LocationService.class).putExtra("remove", true));
     }
 
@@ -105,17 +105,17 @@ public class ExampleActivity extends AppCompatActivity {
 
         private ExampleActivity mActivity;
 
-        InternalLocationReceiver(ExampleActivity activity){
+        InternalLocationReceiver(ExampleActivity activity) {
             mActivity = activity;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             final ExampleActivity activity = mActivity;
-            final TextView textView = activity != null ? (TextView)activity.findViewById(R.id.location_text) : null;
-            if(activity != null && textView != null) {
+            final TextView textView = activity != null ? (TextView) activity.findViewById(R.id.location_text) : null;
+            if (activity != null && textView != null) {
                 LocationResult result = intent.getParcelableExtra("result"); //Get the LocationResult from the intent.
-                if(result != null) {
+                if (result != null) {
                     Location location = result.getLastLocation();
                     //Handle location update here
                     textView.setText(String.format(Locale.US, "Location, %s, %f, %f", location.getProvider(), location.getLatitude(), location.getLongitude()));

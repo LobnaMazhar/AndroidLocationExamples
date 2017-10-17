@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.pablobaxter.location_pending_intent_example">
+    package="com.pablobaxter.location_pending_intent_example">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,13 +12,14 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ExampleActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".LocationReceiver"/>
-        <service android:name=".LocationService"/>
-        <service android:name=".LocationIntentService"/>
+
+        <receiver android:name=".LocationReceiver" />
+
+        <service android:name=".LocationService" />
+        <service android:name=".LocationIntentService" />
     </application>
 </manifest>

@@ -40,10 +40,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         //Use this to get updates in the broadcast receiver.
-        mPendingIntent =  PendingIntent.getBroadcast(this, 0, new Intent(this, LocationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        mPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, LocationReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        /*
+         * Note: This will no longer work with Android Oreo. I highly recommend using the above method (using a BroadcastReceiver).
+         */
 
         //Use this to get updates in the intent service.
 //        mPendingIntent =  PendingIntent.getService(this, 0, new Intent(this, LocationIntentService.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -52,41 +56,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
         //Register our local receiver with the intent filter of "locationReceiver" to listen for updates broadcast from either the LocationIntentService or LocationBroadcastReceiver.
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocalReceiver, new IntentFilter("locationReceiver"));
 
         //Permission check for Android 6.0+
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             requestUpdates();
-        }
-        else {
+        } else {
             //Request permissions if we need them
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
 
         //Unregister our local receiver.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocalReceiver);
 
         //Permission check for Android 6.0+
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.removeUpdates(mPendingIntent);
         }
     }
 
     @SuppressWarnings("MissingPermission")
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        if(requestCode == 0){ //Request code passed in by requestPermissions(Activity, String[], int)
-            if(permissions.length > 0 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)){
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) { //Request code passed in by requestPermissions(Activity, String[], int)
+            if (permissions.length > 0 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     requestUpdates();
                 }
             }
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("MissingPermission")
-    private void requestUsingProviders(){
+    private void requestUsingProviders() {
         //GPS Location
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mPendingIntent); //Time is set to fastest, with a minimum distance of 0m.
 
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Simple helper method
-    private void requestUpdates(){
+    private void requestUpdates() {
         /* Requesting for locations using Providers */
         requestUsingProviders();
 
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("MissingPermission")
-    private void requestUsingCriteria(){
+    private void requestUsingCriteria() {
         //Get the new criteria object
         Criteria criteria = new Criteria();
 
@@ -127,19 +130,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //This is the local BroadcastReceiver we will use to get updates back from either the LocationBroadcastReceiver or the LocationIntentService.
-    static class InternalLocalReceiver extends BroadcastReceiver{
+    static class InternalLocalReceiver extends BroadcastReceiver {
 
         private MainActivity mActivity;
 
-        InternalLocalReceiver(MainActivity activity){
+        InternalLocalReceiver(MainActivity activity) {
             mActivity = activity;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             MainActivity activity = mActivity;
-            TextView textView = activity != null ? (TextView)activity.findViewById(R.id.location_text) : null;
-            if(activity != null && textView != null){
+            TextView textView = activity != null ? (TextView) activity.findViewById(R.id.location_text) : null;
+            if (activity != null && textView != null) {
                 Location location = intent.getParcelableExtra("locationUpdate");
                 textView.setText(String.format(Locale.US, "%s, %f, %f", location.getProvider(), location.getLatitude(), location.getLongitude()));
             }
